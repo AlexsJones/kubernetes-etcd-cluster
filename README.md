@@ -1,12 +1,20 @@
 # kubernetes-etcd-cluster
 
 Based on https://github.com/helm/charts/tree/master/incubator/etcd without helm, because helm sort of sucks :)
-
+I added a few bits like actual PVC, auto scalar and a different image version, not much more than that.
+_Just works_
 
 ## Dependencies
 
 - Golang 1.9.X or above  
 - `go get github.com/AlexsJones/vortex`
+
+## deployment
+```
+./build_environment.sh default
+kubectl exec etcd-0 etcdctl cluster-health -n etcd
+```
+
 
 ## Failover
 If any etcd member fails it gets re-joined eventually. You can test the scenario by killing process of one of the replicas:

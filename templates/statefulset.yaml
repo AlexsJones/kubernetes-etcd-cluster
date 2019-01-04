@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: etcd
-        image: "k8s.gcr.io/etcd-amd64:2.2.5"
+        image: "{{.image}}"
         imagePullPolicy: "IfNotPresent"
         ports:
         - containerPort: 2380
@@ -31,7 +31,7 @@ spec:
         - name: SET_NAME
           value: etcd
         volumeMounts:
-        - name: datadir
+        - name: data
           mountPath: /var/run/etcd
         lifecycle:
           preStop:
@@ -111,7 +111,7 @@ spec:
                 MEMBER_HASH=$(member_hash)
                 if [ -n "${MEMBER_HASH}" ]; then
                     # the member hash exists but for some reason etcd failed
-                    # as the datadir has not be created, we can remove the member
+                    # as the data dir has not be created, we can remove the member
                     # and retrieve new hash
                     etcdctl member remove ${MEMBER_HASH}
                 fi
@@ -168,3 +168,12 @@ spec:
       volumes:
       - name: datadir
         emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{.datasize}}
