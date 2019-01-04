@@ -1,0 +1,3 @@
+preamble: This is auto generated code
+namespace: etcd
+replicas: 3
