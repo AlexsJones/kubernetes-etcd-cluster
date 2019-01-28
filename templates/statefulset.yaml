@@ -13,6 +13,20 @@ spec:
       labels:
         app: etcd
     spec:
+      {{- if .affinity_key }}
+      {{- if .affinity_selector }}
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: {{.affinity_key}}
+                operator: In
+                values:
+                - {{.affinity_selector}}
+      {{- end }}
+      {{- end }}
       containers:
       - name: etcd
         image: "{{.image}}"
