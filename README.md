@@ -83,4 +83,6 @@ etcd-0    1/1       Running   0          8m
 etcd-1    1/1       Running   0          8m
 etcd-2    1/1       Running   0          8m
 etcd-3    1/1       Running   0          4s
+```
+
 Once a replica is terminated (either by running kubectl delete pod etcd-ID or scaling down), content of /var/run/etcd/ directory is cleaned up. If any of the etcd pods restarts (e.g. caused by etcd failure or any other), the directory is kept untouched so the pod can recover from the failure.
