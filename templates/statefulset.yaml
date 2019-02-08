@@ -47,6 +47,9 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /var/run/etcd
+        - name: etcd-config
+          mountPath: /etc/etcd.conf
+          subPath: etcd.conf
         lifecycle:
           preStop:
             exec:
@@ -152,6 +155,7 @@ spec:
                     --initial-advertise-peer-urls http://${HOSTNAME}.${SET_NAME}:2380 \
                     --initial-cluster ${ETCD_INITIAL_CLUSTER} \
                     --initial-cluster-state ${ETCD_INITIAL_CLUSTER_STATE}
+                    --config-file /etc/etcd.conf
             fi
 
             for i in $(seq 0 $((${INITIAL_CLUSTER_SIZE} - 1))); do
@@ -179,9 +183,13 @@ spec:
                 --initial-cluster ${PEERS} \
                 --initial-cluster-state new \
                 --data-dir /var/run/etcd/default.etcd
+                --config-file /etc/etcd.conf
       volumes:
       - name: datadir
         emptyDir: {}
+      - name: etcd-config
+        configMap:
+          name: etcd-config
   volumeClaimTemplates:
     - metadata:
         name: data

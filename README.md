@@ -16,6 +16,13 @@ kubectl exec etcd-0 etcdctl cluster-health -n etcd
 ```
 
 
+## quick test
+
+```
+kubectl exec etcd-0 -n etcd -- etcdctl set foo bar
+kubectl exec etcd-2 -n etcd -- etcdctl get foo
+```
+
 ## Failover
 If any etcd member fails it gets re-joined eventually. You can test the scenario by killing process of one of the replicas:
 ```
