@@ -3,8 +3,7 @@ kind: Service
 metadata:
   annotations:
     service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
-metadata:
-  name: etcd
+  name: {{.servicename}}
   namespace: {{.namespace}}
   labels:
     app: etcd

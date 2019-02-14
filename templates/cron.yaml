@@ -1,0 +1,35 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: etcd-defrag-cron
+spec:
+  schedule: "{{.defragschedule}}"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: etcd
+              image: "k8s.gcr.io/etcd-amd64:3.2.26"
+              args:
+                - /bin/sh
+                - -c
+                - |
+                  lb_etcd='{{.servicename}}.{{.namespace}}.svc.cluster.local:2379'
+                  export ETCDCTL_API=3
+                  members=$(etcdctl --endpoints=$lb_etcd member list)
+                  endpoints=$(echo "$members" | tr ' ' '\n' | grep 2379)
+
+                  endpoint=
+                  for e in $endpoints; do
+                      echo "running defrag for : $e"
+                      etcdctl --endpoints="$e" defrag
+                      etcdctl --endpoints="$e" --write-out=table endpoint status
+                      endpoint=$e
+                  done;
+
+                  echo "running disarm against : $endpoint"
+                  etcdctl --endpoints="$endpoint" alarm disarm
+                  etcdctl --endpoints="$endpoint" alarm list
+                  echo "success"
+          restartPolicy: OnFailure
