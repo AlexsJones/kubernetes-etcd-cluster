@@ -14,22 +14,24 @@ spec:
               args:
                 - /bin/sh
                 - -c
+                - -x
+                - -e
                 - |
+                  etcdctl="etcdctl --command-timeout={{.commandtimeout}}"
                   lb_etcd='{{.servicename}}.{{.namespace}}.svc.cluster.local:2379'
                   export ETCDCTL_API=3
-                  members=$(etcdctl --endpoints=$lb_etcd member list)
+                  members=$($etcdctl --endpoints=$lb_etcd member list)
                   endpoints=$(echo "$members" | tr ' ' '\n' | grep 2379)
 
                   endpoint=
                   for e in $endpoints; do
                       echo "running defrag for : $e"
-                      etcdctl --endpoints="$e" defrag
-                      etcdctl --endpoints="$e" --write-out=table endpoint status
+                      $etcdctl --endpoints="$e" defrag
+                      $etcdctl --endpoints="$e" --write-out=table endpoint status
                       endpoint=$e
                   done;
 
                   echo "running disarm against : $endpoint"
-                  etcdctl --endpoints="$endpoint" alarm disarm
-                  etcdctl --endpoints="$endpoint" alarm list
-                  echo "success"
+                  $etcdctl --endpoints="$endpoint" alarm disarm
+                  $etcdctl --endpoints="$endpoint" alarm list
           restartPolicy: OnFailure
