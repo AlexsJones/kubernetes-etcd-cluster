@@ -4,5 +4,11 @@ replicas: 3
 image : k8s.gcr.io/etcd-amd64:3.2.26
 datasize: 250Gi
 servicename: etcd
-defragschedule: 0 2 * * *
-commandtimeout: 120s
+
+cron:
+  defragschedule: 0 2 * * *
+  commandtimeout: 120s
+
+args:
+  auto-compaction-retention: 1
+  data-dir: /var/run/etcd/default.etcd
