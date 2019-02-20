@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: etcd-defrag-cron
 spec:
-  schedule: "{{.defragschedule}}"
+  schedule: "{{.cron.defragschedule}}"
   jobTemplate:
     spec:
       template:
@@ -17,7 +17,7 @@ spec:
                 - -x
                 - -e
                 - |
-                  etcdctl="etcdctl --command-timeout={{.commandtimeout}}"
+                  etcdctl="etcdctl --command-timeout={{.cron.commandtimeout}}"
                   lb_etcd='{{.servicename}}.{{.namespace}}.svc.cluster.local:2379'
                   export ETCDCTL_API=3
                   members=$($etcdctl --endpoints=$lb_etcd member list)

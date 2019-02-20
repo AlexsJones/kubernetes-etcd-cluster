@@ -47,9 +47,6 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /var/run/etcd
-        - name: etcd-config
-          mountPath: /etc/etcd.conf
-          subPath: etcd.conf
         lifecycle:
           preStop:
             exec:
@@ -110,11 +107,11 @@ spec:
 
                 # re-join member
                 ETCDCTL_ENDPOINT=$(eps) etcdctl member update ${member_id} http://${HOSTNAME}.${SET_NAME}:2380
-                exec etcd --name ${HOSTNAME} \
+                exec etcd --name ${HOSTNAME} \{{ range $key, $value := .args }}
+                    --{{ $key }} {{ $value }} \{{ end }}
                     --listen-peer-urls http://0.0.0.0:2380 \
                     --listen-client-urls http://0.0.0.0:2379\
-                    --advertise-client-urls http://${HOSTNAME}.${SET_NAME}:2379 \
-                    --data-dir /var/run/etcd/default.etcd
+                    --advertise-client-urls http://${HOSTNAME}.${SET_NAME}:2379
             fi
 
             # etcd-SET_ID
@@ -147,15 +144,14 @@ spec:
 
                 collect_member &
 
-                exec etcd --name ${HOSTNAME} \
+                exec etcd --name ${HOSTNAME} \{{ range $key, $value := .args }}
+                    --{{ $key }} {{ $value }} \{{ end }}
                     --listen-peer-urls http://0.0.0.0:2380 \
                     --listen-client-urls http://0.0.0.0:2379 \
                     --advertise-client-urls http://${HOSTNAME}.${SET_NAME}:2379 \
-                    --data-dir /var/run/etcd/default.etcd \
                     --initial-advertise-peer-urls http://${HOSTNAME}.${SET_NAME}:2380 \
                     --initial-cluster ${ETCD_INITIAL_CLUSTER} \
-                    --initial-cluster-state ${ETCD_INITIAL_CLUSTER_STATE} \
-                    --config-file /etc/etcd.conf
+                    --initial-cluster-state ${ETCD_INITIAL_CLUSTER_STATE}
             fi
 
             for i in $(seq 0 $((${INITIAL_CLUSTER_SIZE} - 1))); do
@@ -174,22 +170,18 @@ spec:
             collect_member &
 
             # join member
-            exec etcd --name ${HOSTNAME} \
+            exec etcd --name ${HOSTNAME} \{{ range $key, $value := .args }}
+                --{{ $key }} {{ $value }} \{{ end }}
                 --initial-advertise-peer-urls http://${HOSTNAME}.${SET_NAME}:2380 \
                 --listen-peer-urls http://0.0.0.0:2380 \
                 --listen-client-urls http://0.0.0.0:2379 \
                 --advertise-client-urls http://${HOSTNAME}.${SET_NAME}:2379 \
                 --initial-cluster-token etcd-cluster-1 \
                 --initial-cluster ${PEERS} \
-                --initial-cluster-state new \
-                --data-dir /var/run/etcd/default.etcd \
-                --config-file /etc/etcd.conf
+                --initial-cluster-state new
       volumes:
       - name: datadir
         emptyDir: {}
-      - name: etcd-config
-        configMap:
-          name: etcd-config
   volumeClaimTemplates:
     - metadata:
         name: data
