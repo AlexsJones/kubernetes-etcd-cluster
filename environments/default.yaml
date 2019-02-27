@@ -12,3 +12,4 @@ cron:
 args:
   auto-compaction-retention: 1
   data-dir: /var/run/etcd/default.etcd
+  quota-backend-bytes: 8589934592
