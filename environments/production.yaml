@@ -1,0 +1,19 @@
+preamble: This is auto generated code
+namespace: etcd
+replicas: 5
+image: k8s.gcr.io/etcd-amd64:3.2.26
+
+servicename: etcd
+
+storage:
+  datasize: 250Gi
+  #  supported options are ssd and empty value
+  disktype: ssd
+cron:
+  defragschedule: 0 2 * * *
+  commandtimeout: 120s
+
+args:
+  auto-compaction-retention: 1
+  data-dir: /var/run/etcd/default.etcd
+  quota-backend-bytes: 8589934592
