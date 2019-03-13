@@ -4,6 +4,7 @@ metadata:
   name: etcd
   labels:
     app: etcd
+  namespace: {{.namespace}}
 spec:
   serviceName: etcd
   replicas: {{.replicas}}
@@ -205,6 +206,9 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
+        {{- if .storage.disktype }}
+        storageClassName: {{.storage.disktype}}-disk
+        {{- end }}
         resources:
           requests:
-            storage: {{.datasize}}
+            storage: {{.storage.datasize}}
