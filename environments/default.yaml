@@ -1,10 +1,14 @@
 preamble: This is auto generated code
 namespace: etcd
 replicas: 3
-image : k8s.gcr.io/etcd-amd64:3.2.26
-datasize: 250Gi
+image: k8s.gcr.io/etcd-amd64:3.2.26
+
 servicename: etcd
 
+storage:
+  datasize: 50Gi
+  #  supported options are ssd and empty value
+  disktype:
 cron:
   defragschedule: 0 2 * * *
   commandtimeout: 120s
