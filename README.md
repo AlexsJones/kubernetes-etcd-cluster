@@ -13,6 +13,8 @@ _Just works_
 
 __In production a default affinity key is set to set the node_pool `etcd` for usage, though you can disable this__
 
+__Optionally `disktype` can be set to one of the kubernetes supported storageclasses__
+
 ```
 ./build_environment.sh default
 kubectl exec etcd-0 etcdctl cluster-health -n etcd
