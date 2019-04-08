@@ -1,7 +1,7 @@
 preamble: This is auto generated code
 namespace: etcd
 replicas: 3
-image: k8s.gcr.io/etcd-amd64:3.2.26
+image: k8s.gcr.io/etcd-amd64:3.3.10
 servicename: etcd
 
 storage:
