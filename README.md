@@ -10,6 +10,11 @@ _Just works_
 - `go get github.com/AlexsJones/vortex`
 
 ## deployment
+
+__In production a default affinity key is set to set the node_pool `etcd` for usage, though you can disable this__
+
+__Optionally `disktype` can be set to one of the kubernetes supported storageclasses__
+
 ```
 ./build_environment.sh default
 kubectl exec etcd-0 etcdctl cluster-health -n etcd
@@ -95,10 +100,10 @@ etcd-3    1/1       Running   0          4s
 Once a replica is terminated (either by running kubectl delete pod etcd-ID or scaling down), content of /var/run/etcd/ directory is cleaned up. If any of the etcd pods restarts (e.g. caused by etcd failure or any other), the directory is kept untouched so the pod can recover from the failure.
 
 
-## Other commands 
+## Other commands
 
 Get all keys
  `ETCDCTL_API=3 etcdctl get "" --prefix --keys-only | sed '/^\s*$/d'`
- 
+
  Delete keys
   `ETCDCTL_API=3 etcdctl del --prefix /`
