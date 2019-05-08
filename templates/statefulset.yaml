@@ -37,9 +37,8 @@ spec:
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            preference:
-              matchExpressions:
+            nodeSelectorTerms:
+            - matchExpressions:
               - key: {{.affinity_key}}
                 operator: In
                 values:
