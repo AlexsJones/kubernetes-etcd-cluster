@@ -36,7 +36,7 @@ spec:
       {{- if .affinity_selector }}
       affinity:
         nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
+          requiredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
             preference:
               matchExpressions:
@@ -44,6 +44,15 @@ spec:
                 operator: In
                 values:
                 - {{.affinity_selector}}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                    - etcd
+              topologyKey: "kubernetes.io/hostname"
       {{- end }}
       {{- end }}
       containers:
