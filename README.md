@@ -15,6 +15,9 @@ __In production a default affinity key is set to set the node_pool `etcd` for us
 
 __Optionally `disktype` can be set to one of the kubernetes supported storageclasses__
 
+
+** If you are using GKE and wish to use SCSI please deploy `deployment/gke-storage` and flip mode in `environments/production` to local-scsci **
+
 ```
 ./build_environment.sh default
 kubectl exec etcd-0 etcdctl cluster-health -n etcd

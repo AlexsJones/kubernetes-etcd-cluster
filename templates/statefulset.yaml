@@ -74,6 +74,8 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /var/run/etcd
+        - name: data
+          mountPath: /etcd-data
         lifecycle:
           preStop:
             exec:
@@ -137,7 +139,8 @@ spec:
                     --{{ $key }} {{ $value }} \{{ end }}
                     --listen-peer-urls http://0.0.0.0:2380 \
                     --listen-client-urls http://0.0.0.0:2379\
-                    --advertise-client-urls http://${HOSTNAME}.${SET_NAME}:2379
+                    --advertise-client-urls http://${HOSTNAME}.${SET_NAME}:2379 \
+                    --data-dir=/etcd-data
             fi
 
             # etcd-SET_ID
@@ -177,7 +180,8 @@ spec:
                     --advertise-client-urls http://${HOSTNAME}.${SET_NAME}:2379 \
                     --initial-advertise-peer-urls http://${HOSTNAME}.${SET_NAME}:2380 \
                     --initial-cluster ${ETCD_INITIAL_CLUSTER} \
-                    --initial-cluster-state ${ETCD_INITIAL_CLUSTER_STATE}
+                    --initial-cluster-state ${ETCD_INITIAL_CLUSTER_STATE} \
+                    --data-dir=/etcd-data
             fi
 
             for i in $(seq 0 $((${INITIAL_CLUSTER_SIZE} - 1))); do
@@ -204,7 +208,8 @@ spec:
                 --advertise-client-urls http://${HOSTNAME}.${SET_NAME}:2379 \
                 --initial-cluster-token etcd-cluster-1 \
                 --initial-cluster ${PEERS} \
-                --initial-cluster-state new
+                --initial-cluster-state new \
+                --data-dir=/etcd-data
       volumes:
       - name: datadir
         emptyDir: {}
@@ -215,7 +220,7 @@ spec:
         accessModes:
           - ReadWriteOnce
         {{- if .storage.disktype }}
-        storageClassName: {{.storage.disktype}}-disk
+        storageClassName: {{.storage.disktype}}
         {{- end }}
         resources:
           requests:

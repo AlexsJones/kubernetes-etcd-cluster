@@ -9,7 +9,8 @@ servicename: etcd
 storage:
   datasize: 50Gi
   #  supported options are ssd and empty value
-  disktype: ssd
+  disktype: local-scsi
+  # There also an option for ssd-disk or local-scsi
 cron:
   defragschedule: 0 2 * * *
   commandtimeout: 120s
