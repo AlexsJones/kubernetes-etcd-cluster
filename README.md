@@ -4,27 +4,40 @@ Based on https://github.com/helm/charts/tree/master/incubator/etcd without helm,
 I added a few bits like actual PVC, auto scalar and a different image version, not much more than that.
 _Just works_
 
-## Dependencies
 
-- Golang 1.9.X or above  
-- `go get github.com/AlexsJones/vortex`
-
-## deployment
+## Deployment
 
 __In production a default affinity key is set to set the node_pool `etcd` for usage, though you can disable this__
 
 __Optionally `disktype` can be set to one of the kubernetes supported storageclasses__
 
 
-** If you are using GKE and wish to use SCSI please deploy `deployment/gke-storage` and flip mode in `environments/production` to local-scsci **
+#### Production with scsi
+
+If you are using GKE and wish to use SCSI please deploy `deployment/gke-storage` and flip mode in `environments/production` to local-scsci
+
+e.g.
 
 ```
-./build_environment.sh default
-kubectl exec etcd-0 etcdctl cluster-health -n etcd
+docker run -v $PWD:/tmp tibbar/vortex:v1 -template /tmp/templates -output /tmp/deployment -varpath /tmp/environments/production.yaml
+kubectl create -f deployment/gke-storage -n etcd
+kubectl create -f deployment/ -n etcd
+```
+
+#### Local testing
+
+For local testing on minikube or a cluster without attached disks
+
+```
+docker run -v $PWD:/tmp tibbar/vortex:v1 -template /tmp/templates -output /tmp/deployment -varpath /tmp/environments/default.yaml
+kubectl create -f deployment/gke-storage -n etcd
+kubectl create -f deployment/ -n etcd
 ```
 
 
-## quick test
+## Quick test
+
+Once the application has been deployed check it works...
 
 ```
 kubectl exec etcd-0 -n etcd -- etcdctl set foo bar
